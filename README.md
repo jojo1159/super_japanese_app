@@ -1,0 +1,1 @@
+# super_japanese_app
