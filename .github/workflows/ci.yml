@@ -1,7 +1,7 @@
 name: CI
 on: [push]
 env:
-  cache-version: v3
+  cache-version: v1
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,32 +15,50 @@ jobs:
       image: ruby:3.1.2
       env:
         BUNDLE_PATH: vendor/bundle
-        KMH_DATABASE_HOST: mysql
-        KMH_DATABASE_USERNAME: root
-        KMH_DATABASE_PASSWORD: P@ssw0rd!
-        KMH_DATABASE_SOCKET: /var/run/mysqld/mysqld.sock
-        SUBDOMAIN_CONSOLE: console
-        ACCESSABLE_HOSTS: .lvh.me
+        DATABASE_HOST: mysql
+        DATABASE_USERNAME: root
+        DATABASE_PASSWORD: P@ssw0rd!
     steps:
-    - uses: actions/checkout@v3
-    - name: Restore cache vendor/bundle
-      uses: actions/cache@v3
-      with:
-        path: vendor/bundle
-        key: ${{ env.cache-version }}-bundle-${{ hashFiles('**/Gemfile.lock') }}
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16.17.0
-    - name: Build
-      run: |
-        gem install bundler
-        bundle config set deployment 'true'
-        bundle install --jobs 4 --retry 3
-        bundle exec rails db:create db:schema:load
-    - name: Run rubocop
-      run: |
-        bundle exec rubocop
-    - name: Run test
-      run: |
-        bundle exec rspec --format progress
+      - uses: actions/checkout@v2
+      - name: restore cache vendor/bundle
+        uses: actions/cache@v1
+        with:
+          path: vendor/bundle
+          key: ${{ env.cache-version }}-bundle-${{ hashFiles('**/Gemfile.lock') }}
+      - name: restore cache node_modules
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ env.cache-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+      - name: Set up yarn and node
+        run: |
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+          curl -sL https://deb.nodesource.com/setup_12.x | bash -
+          apt install -y yarn nodejs
+      # - name: Install chrome
+      #   run: |
+      #     wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+      #     echo 'deb http://dl.google.com/linux/chrome/deb/ stable main' | tee /etc/apt/sources.list.d/google-chrome.list
+      #     apt update -y
+      #     apt install -y google-chrome-stable
+      - name: Build
+        env:
+          BUNDLE_RUBYGEMS__PKG__GITHUB__COM: ${{ secrets.BUNDLE_RUBYGEMS__PKG__GITHUB__COM }}
+        run: |
+          gem install bundler
+          bundle config set deployment 'true'
+          bundle install --jobs 4 --retry 3
+          bundle exec rails yarn:install db:create db:schema:load
+      - name: Run webpack
+        run: |
+          bundle exec bin/webpack
+      - name: Run rubocop
+        run: |
+          bundle exec rubocop
+      - name: Run test
+        run: |
+          bundle exec rails test
+    # - name: Run sytem test
+    #   run: |
+    #     bundle exec rails test:system
