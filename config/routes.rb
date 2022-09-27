@@ -7,4 +7,5 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "articles#index"
   # default_url_options :host => "localhost:3000"
+  default_url_options host: 'localhost:3000'
 end

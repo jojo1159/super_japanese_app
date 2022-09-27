@@ -35,6 +35,12 @@ class DeviseTokenAuthCreateUsers < ActiveRecord::Migration[7.0]
 
       ## Tokens
       t.text :tokens
+      ## Trackable
+      t.integer :sign_in_count, default: 0, null: false
+      t.datetime :current_sign_in_at
+      t.datetime :last_sign_in_at
+      t.integer :current_sign_in_ip
+      t.integer :last_sign_in_ip
 
       t.timestamps
     end

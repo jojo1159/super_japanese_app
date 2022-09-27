@@ -15,8 +15,20 @@ Rails.application.configure do
   # this probably isn't necessary. It's a good idea to do in a continuous integration
   # system, or in some way before deploying your code.
   config.eager_load = ENV['CI'].present?
-  config.action_mailer.default_url_options = { host: 'localhost:3000' }
-
+  config.active_storage.service = :local
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { host: ENV.fetch('JAPANESE_MAIL_HOST', nil), protocol: 'http://', locale: nil }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    user_name: ENV.fetch('SENDMAIL_USERNAME', nil),
+    password: ENV.fetch('SENDMAIL_PASSWORD', nil),
+    domain: ENV.fetch('JAPANESE_MAIL_HOST', nil),
+    address: 'smtp.gmail.com',
+    port: '587',
+    authentication: :plain,
+    enable_starttls_auto: true,
+  }
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
