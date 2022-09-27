@@ -16,7 +16,6 @@ Rails.application.configure do
 
   # Enable server timing
   config.server_timing = true
-  config.action_mailer.default_url_options = { host: 'localhost:3000' }
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
@@ -33,7 +32,20 @@ Rails.application.configure do
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
-
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  routes.default_url_options[:host] = 'localhost:3000'
+  config.action_mailer.default_url_options = { host: 'localhost:3000' }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    user_name: ENV.fetch('SENDMAIL_USERNAME', nil),
+    password: ENV.fetch('SENDMAIL_PASSWORD', nil),
+    domain: ENV.fetch('JAPANESE_MAIL_HOST', nil),
+    address: '127.0.0.1',
+    port: '1025',
+    authentication: :plain,
+    enable_starttls_auto: true,
+  }
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
 
