@@ -29,9 +29,11 @@ gem 'bootsnap', require: false
 gem 'devise'
 gem 'devise_token_auth'
 gem 'faker'
+gem 'kaminari'
 gem 'mysql2'
 gem 'omniauth'
 gem 'rack-cors'
+gem 'ransack'
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
