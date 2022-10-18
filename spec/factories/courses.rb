@@ -10,7 +10,7 @@
 #
 FactoryBot.define do
   factory :course do
-    name { "MyString" }
-    desc { "MyString" }
+    name { 'MyString' }
+    desc { 'MyString' }
   end
 end
