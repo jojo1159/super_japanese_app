@@ -1,2 +1,2 @@
 # super_japanese_app
-1e_21XoU5TUCV3qWoVQPihTWlbNYidt_EXS9CvHTVDrsBPes8IYI3Popz
+AKfycbzMcQY3QqlLr5hOcIHGYguAB3TVMQvYFz2mXjnSse7qGaMarRVUAJ9XO2KfMML-4QbH
